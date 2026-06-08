@@ -419,7 +419,7 @@ def train_stage1(model, train_dataset, val_dataset, baseline_t, cfg, device):
     best_val_loss, patience_ctr, best_state = float('inf'), 0, None
     history = []
 
-    print("\n── Stage 1: Representation + Outcome Learning ──")
+    print("\n Stage 1: Representation + Outcome Learning")
     for epoch in range(1, cfg.max_epochs_s1 + 1):
         model.train()
         train_comp = {k: 0.0 for k in ['out','stab','prop','bal','ite','reg','total']}
@@ -486,7 +486,7 @@ def train_stage2(model, train_dataset, val_dataset, cfg, device):
     best_val_loss, patience_ctr, best_state = float('inf'), 0, None
     history = []
 
-    print("\n── Stage 2: Diffusion Model (encoder frozen) ──")
+    print("\n Stage 2: Diffusion Model (encoder frozen)")
     for epoch in range(1, cfg.max_epochs_s2 + 1):
         model.train()
         # Keep encoder frozen in eval mode 
@@ -590,7 +590,7 @@ def analyze_ite(model, dataset, therapy_map, baseline_t, cfg, device):
     inv_map  = {v: k for k, v in therapy_map.items()}
     base_name = inv_map.get(baseline_t, f'T{baseline_t}')
 
-    print(f"\n── Treatment Effect Estimation (Objective ii) ──")
+    print(f"\n Treatment Effect Estimation")
     print(f"  Baseline treatment : {base_name}")
     print(f"  Negative ITE = drug reduces HAMD more than baseline = better\n")
     print(f"  {'Treatment':<<14}  {'Mean ITE':>10}  {'Std':>8}  "
@@ -633,19 +633,13 @@ def analyze_ite(model, dataset, therapy_map, baseline_t, cfg, device):
 @torch.no_grad()
 def demonstrate_inference_types(model, dataset, therapy_map, baseline_t,
                                  cfg, device, n_patients=3):
-    """
-    Demonstrates all three inference types from PDF Section E.
-      (i)   Factual          : f_θ(S, C, T_obs)
-      (ii)  CF no diffusion  : f_θ(S, C, T_cf)
-      (iii) CF with diffusion: f_θ(S, C_cf, T_cf)  — C_cf via reverse DDPM
-    """
     model.eval()
     inv_map    = {v: k for k, v in therapy_map.items()}
     alphas_bar = make_alphas_bar(cfg.T_diff, cfg.beta_start, cfg.beta_end, device)
     betas      = torch.linspace(cfg.beta_start, cfg.beta_end, cfg.T_diff, device=device)
     alphas     = 1.0 - betas
 
-    print(f"\n── Inference Type Demonstration (PDF Section E) ──")
+    print(f"\n Inference Type Demonstration")
     print(f"  y = next-visit HAMD total score  |  lower = less depressed\n")
 
     shown, seen = 0, set()
